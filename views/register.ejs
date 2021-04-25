@@ -1,0 +1,20 @@
+<%- include("header") -%>
+
+<div class="login-div">
+  <form class="login-form" action="/register" method="POST">
+    <img src="images/logo.jpg" class="logo">
+    <h1>Register</h1>
+    <div class="form-floating top-div">
+      <input class="form-control top-input" id="floatingUsername" placeholder="Username" name="username">
+      <label for="floatingPassword"> Username</label>
+    </div>
+    <div class="form-floating">
+      <input type="password" class="form-control bottom-input" id="floatingPassword" placeholder="Password" name="password">
+      <label for="floatingPassword">Password</label>
+    </div>
+    <button type="submit" class="btn btn-lg btn-outline-dark col-6 submit-btn">Submit</button>
+    <a role="button" href="/" class="btn btn-lg btn-outline-dark col-6">Go Back</a>
+  </form>
+</div>
+
+<%- include("footer") -%>
