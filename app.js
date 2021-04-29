@@ -47,7 +47,34 @@ app.get("/register", (req, res) => {
 
 app.get("/social", (req, res) => {
   if(req.isAuthenticated()){
-    res.render("social");
+    res.render("social",{username:req.user.username});
+    console.log(req.user);
+  } else {
+    res.redirect("/login");
+  }
+})
+
+app.get("/profile/:userName", (req, res) => {
+  const userName = req.params.userName;
+  if(req.isAuthenticated()){
+    User.findOne({username: userName}, function(err, foundUser){
+      if(err){
+        console.log(err);
+      } else {
+        if(foundUser){
+          if(userName === req.user.username){
+            res.render("profile", {user:foundUser, currentUser:true});
+          } else {
+            res.render("profile", {user:foundUser, currentUser:false});
+          }
+        } else {
+          res.send("This user does not exist");
+        }
+        // foundList.items.push(item);
+        // foundList.save();
+        // res.redirect("/" + listName);
+      }
+    })
     console.log(req.user);
   } else {
     res.redirect("/login");

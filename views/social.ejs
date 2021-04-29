@@ -12,9 +12,10 @@
 <body>
 
 <div class="login-div">
-  <form class="login-form" action="/logout" method="POST">
-    <img src="images/logo.jpg" class="logo">
-    <h1>You're in!</h1>
+  <img src="images/logo.jpg" class="logo">
+  <h1>You're in!</h1>
+  <a href="/profile/<%=username%>" role="button" class="btn btn-lg btn-outline-primary col-6">Profile</a>
+  <form class="" action="/logout" method="POST">
     <button type="submit" class="btn btn-lg btn-outline-primary col-6">Logout</button>
   </form>
 </div>

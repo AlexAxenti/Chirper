@@ -21,11 +21,11 @@ h1 {
   height: 60%; */
   width: 375px;
   height: 600px;
-  top: 20%;
+  top: 25%;
   left: 37.5%;
   padding: 1%;
-  display: flex;
-  justify-content: center;
+  /* display: flex;
+  justify-content: center; */
 }
 
 .btn{
