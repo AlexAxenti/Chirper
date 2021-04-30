@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html>
 
 <head>
   <meta charset="utf-8">
@@ -13,9 +13,9 @@
 
 <div class="login-div">
   <img src="images/logo.jpg" class="logo">
-  <h1>You're in!</h1>
+  <h1 class="intro-header">You're in!</h1>
   <a href="/profile/<%=username%>" role="button" class="btn btn-lg btn-outline-primary col-6">Profile</a>
-  <form class="" action="/logout" method="POST">
+  <form class="login-form" action="/logout" method="POST">
     <button type="submit" class="btn btn-lg btn-outline-primary col-6">Logout</button>
   </form>
 </div>
