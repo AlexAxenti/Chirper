@@ -138,6 +138,22 @@ app.post("/profile", (req, res) => {
     }
   });
 });
+///.*username.*/
+app.post("/search", (req, res) => {
+  if(req.isAuthenticated()){
+    const searchedUsername = req.body.searchName;
+    User.find({username:{ $regex: searchedUsername, $options: "i"}}, function(err, foundUsers){
+    //User.find({username:/.*test.*/}, function(err, foundUsers){
+      if(err){
+        console.log(err);
+      } else {
+        res.render("search", {foundUsers: foundUsers, searchedUsername: searchedUsername});
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
 
 /*                            Login and Register                         */
 

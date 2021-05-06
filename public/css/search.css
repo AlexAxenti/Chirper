@@ -1,0 +1,19 @@
+body, html {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+.users-container{
+  border-left: 30px solid #429bf5;
+  border-right: 30px solid #429bf5;
+  width:800px;
+}
+
+.search-bar {
+  width: 70%;
+}
+
+.return-button {
+  margin-top: 15px;
+}
