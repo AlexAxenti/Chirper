@@ -39,7 +39,7 @@
           </form>
         </div>
       <%}%>
-      <% user.posts.forEach(function(post){ %>
+      <% user.posts.slice().reverse().forEach(function(post){ %>
         <div class="post">
           <h3><%=post.content%></h3>
           <hr>
