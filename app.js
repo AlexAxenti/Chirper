@@ -30,13 +30,20 @@ const postSchema = new mongoose.Schema({
   username: String,
   content: String,
   posted: Date
-})
+});
 const Post = new mongoose.model("Post", postSchema);
+
+const bioSchema = new mongoose.Schema({
+  description: String,
+  location: String,
+  birthday: Date
+});
+const Bio = new mongoose.model("Bio", bioSchema);
 
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  bio: String,
+  bio: bioSchema,
   posts: [postSchema]
 });
 userSchema.plugin(passportLocalMongoose);
@@ -98,7 +105,6 @@ app.get("/profile/:userName", (req, res) => {
         // res.redirect("/" + listName);
       }
     })
-    console.log(req.user);
   } else {
     res.redirect("/login");
   }
@@ -138,7 +144,21 @@ app.post("/profile", (req, res) => {
     }
   });
 });
-///.*username.*/
+
+app.post("/profile/bio", (req, res) => {
+  if(req.isAuthenticated()){
+    const newDescription = req.body.description;
+    const newLocation = req.body.location;
+    User.findOneAndUpdate({username:req.user.username}, {bio:{description: newDescription, location: newLocation}}, function(err, foundUser){
+      if(err){
+        console.log(err);
+      } else {
+        res.redirect("/profile/"+req.user.username);
+      }
+    });
+  }
+});
+
 app.post("/search", (req, res) => {
   if(req.isAuthenticated()){
     const searchedUsername = req.body.searchName;
@@ -183,7 +203,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  User.register({username: req.body.username, bio: ""}, req.body.password, function(err, user){
+  const initialDescription = "Hi, I'm " + req.body.username;
+  User.register({username: req.body.username, bio: {description: initialDescription, location: "", birthday: new Date()}}, req.body.password, function(err, user){
     if(err){
       console.log(err);
       res.redirect("/register");

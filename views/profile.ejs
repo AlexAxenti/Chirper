@@ -16,7 +16,17 @@
     <div class="col-lg-4 col-md-12">
       <img class="profile-pic" src="../images/profilepic.png">
       <h1 class="username-display"><%=user.username%> </h1>
-      <h3 class="bio"> <%=user.bio%> </h3>
+      <% if(user.bio.description.length > 0){ %>
+        <h4 class="bio"> <%=user.username%>'s bio: </h4>
+        <h5> <%=user.bio.description%> </h5>
+      <%}%>
+      <% if(user.bio.location.length > 0){ %>
+        <h4 class="bio"> <%=user.username%> is from: </h4>
+        <h5> <%=user.bio.location%> </h5>
+      <%}%>
+      <div class=edit-btn-div>
+        <button class="btn btn-md btn-outline-dark edit-btn" onClick="document.getElementById('popup').style.display='inline'">Edit Profile</button>
+      </div>
       <a form="button" class="btn btn-md btn-outline-dark return-btn" href="/social">Go Back</a>
     </div>
     <div class="col-lg-8 col-md-12">
@@ -37,6 +47,21 @@
         </div>
       <%})%>
     </div>
+  </div>
+</div>
+
+<div class="popup-window" id="popup">
+  <div class="edit-info">
+    <form action="/profile/bio" method="POST">
+      <label>Edit Description
+        <textarea id="edit-description" name="description" cols="50" rows="4"><%=user.bio.description%></textarea>
+      </label>
+      <label>Edit Location
+        <textarea id="edit-location" name="location" cols="50" rows="4"><%=user.bio.location%></textarea>
+      </label>
+      <button type="submit" class="btn btn-md btn-outline-dark save-bio-btn">Save</button>
+    </form>
+    <button class="btn btn-md btn-outline-dark close-btn" onClick="document.getElementById('popup').style.display='none'">Close</button>
   </div>
 </div>
 

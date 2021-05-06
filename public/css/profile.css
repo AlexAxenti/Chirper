@@ -1,15 +1,36 @@
-h1{
-  color:red;
-}
-
 body, html {
   height:100%;
   width:100%;
 }
 
+h1{
+  color:red;
+}
+
+h5 {
+  padding: 0;
+  margin: 0;
+}
+
+hr{
+  background-color: black;
+  margin: 0;
+}
+
+textarea {
+  font-size: 16px;
+  display:inline-block;
+  vertical-align: top;
+}
+
+label {
+  margin-top: 20px;
+}
+
 .profile-contain {
   margin:5%;
   text-align: center;
+  position: relative;
 }
 
 .post {
@@ -40,22 +61,53 @@ body, html {
   width: 50%;
 }
 
+.bio{
+  margin-top: 20px;
+}
+
+.edit-btn-div{
+  display:block;
+}
+
 .return-btn {
+  margin-top: 15px;
+  width:105px;
+}
+
+.edit-btn{
   margin-top: 50px;
+  width:105px;
 }
 
-h5 {
-  padding: 0;
-  margin: 0;
+.popup-window {
+  position: fixed;
+  width:30%;
+  height:70%;
+  top:15%;
+  left:35%;
+  background-color: CadetBlue;
+  border: 4px solid black;
+  display: none;
+  box-shadow: 10px 10px 10px #666;
+  text-align: center;
 }
 
-hr{
-  background-color: black;
-  margin: 0;
+.save-bio-btn {
+  margin: 10px;
+  width:75px;
 }
 
-textarea {
-  font-size: 16px;
-  display:inline-block;
-  vertical-align: top;
+.close-btn {
+  width:75px;
+}
+
+#edit-description{
+  background-color: Gainsboro;
+  width:80%;
+}
+
+
+#edit-location{
+  background-color: Gainsboro;
+  width:80%;
 }
