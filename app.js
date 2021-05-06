@@ -147,6 +147,9 @@ app.post("/search", (req, res) => {
       if(err){
         console.log(err);
       } else {
+        foundUsers.sort(function(a, b) {
+          return a.username.length - b.username.length;
+        })
         res.render("search", {foundUsers: foundUsers, searchedUsername: searchedUsername});
       }
     });
