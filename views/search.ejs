@@ -18,13 +18,13 @@
     <h2> Found <%= foundUsers.length %> Users Matching <%= searchedUsername %> </h2>
     <hr>
     <div class="container justify-content-center search-bar">
-        <form action="/search" method="POST">
-          <div class="input-group">
-              <input name="searchName" type="text" class="form-control" placeholder="Search Users">
-              <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
-          </div>
-          <a form="button" class="btn btn-outline-primary return-button" href="/social">Go Back</a>
-        </form>
+      <form action="/search" method="POST">
+        <div class="input-group">
+            <input name="searchName" type="text" class="form-control" placeholder="Search Users">
+            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
+        </div>
+        <a form="button" class="btn btn-outline-primary return-button" href="/social">Go Back</a>
+      </form>
     </div>
     <hr>
     <% foundUsers.forEach(function(user){ %>

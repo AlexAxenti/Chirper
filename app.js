@@ -8,8 +8,8 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const path = require("path");
 
 const app = express();
-app.use(express.static("public"));
-//app.use(express.static(__dirname + '/public/'));
+//app.use(express.static("public"));
+app.use(express.static(path.join(__dirname,'/public')));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -123,6 +123,24 @@ app.get("/profile/:userName", (req, res) => {
     res.redirect("/login");
   }
 })
+
+app.get("/profile/:userName/friends", (req, res) => {
+  const userName = req.params.userName;
+  if(req.isAuthenticated()){
+    User.findOne({username: userName}, function(err, foundUser){
+      if(err){
+        console.log(err);
+      } else {
+        if(foundUser){
+          res.render("friendlist", {user: foundUser});
+        } else {
+          res.send("User not found");
+        }
+      }
+    });
+  }
+
+});
 
 /*                             Post Requests                         */
 
