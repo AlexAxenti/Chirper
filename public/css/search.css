@@ -4,6 +4,10 @@ body, html {
   text-align: center;
 }
 
+a {
+  text-decoration: none;
+}
+
 .users-container{
   border-left: 30px solid #429bf5;
   border-right: 30px solid #429bf5;

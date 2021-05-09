@@ -27,6 +27,10 @@ label {
   margin-top: 20px;
 }
 
+a {
+  text-decoration: none;
+}
+
 .profile-contain {
   margin:5%;
   text-align: center;
@@ -65,7 +69,7 @@ label {
   margin-top: 20px;
 }
 
-.edit-btn-div{
+.bio-btn-div{
   display:block;
 }
 
@@ -74,8 +78,14 @@ label {
   width:105px;
 }
 
-.edit-btn{
-  margin-top: 50px;
+.bio-btn{
+  margin-left: 10px;
+  margin-top: 35px;
+  width: 140px;
+}
+
+.send-fr-btn{
+  margin-top: 35px;
   width:105px;
 }
 
@@ -90,6 +100,41 @@ label {
   display: none;
   box-shadow: 10px 10px 10px #666;
   text-align: center;
+}
+
+.scroll-container {
+  margin: 25px auto 25px auto;
+  overflow: auto;
+  height: 55vh;
+  max-height: 55vh;
+  width: 80%;
+  background-color: white;
+}
+
+.scroll-fr {
+  padding-top: 8px;
+  height: 60px;
+  width: 100%;
+  background-color: white;
+}
+
+.fr-user {
+  padding-top: 4px;
+  display: inline-block;
+  margin-right: 100px;
+}
+
+.accept-btn {
+  margin-bottom: 10px;
+}
+
+.fr-seperator {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  border-top: 1.5px solid black;
+  margin-left: 15px;
+  margin-right: 15px;
+  opacity: 1;
 }
 
 .save-bio-btn {

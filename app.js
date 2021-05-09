@@ -29,14 +29,15 @@ mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopolo
 const postSchema = new mongoose.Schema({
   username: String,
   content: String,
-  posted: Date
+  likes: Number,
+  posted: String
 });
 const Post = new mongoose.model("Post", postSchema);
 
 const bioSchema = new mongoose.Schema({
   description: String,
   location: String,
-  birthday: Date
+  accountCreated: Date
 });
 const Bio = new mongoose.model("Bio", bioSchema);
 
@@ -44,9 +45,12 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   bio: bioSchema,
-  posts: [postSchema]
+  friendRequests: [String],
+  friends: [String],
+  posts: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}]
+  //posts: [postSchema]
 });
-userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(passportLocalMongoose, {usernameLowerCase: true});
 const User = new mongoose.model("User", userSchema);
 
 passport.use(User.createStrategy());
@@ -79,30 +83,40 @@ app.get("/social", (req, res) => {
 // app.get("/social", (req, res) => {
 //     res.render("social",{username:"testing"});
 // })
-
-app.get("/profile/testing", (req, res) => {
-  res.render("profile", {user:{username:"testing", posts:[{content:"hello there", posted:"2021-04-30"}, {content:"testing post", posted:"2021-04-25"}]}, currentUser:true});
-});
+//
+// app.get("/profile/testing", (req, res) => {
+//   res.render("profile", {user:{username:"testing", posts:[{content:"hello there", posted:"2021-04-30"}, {content:"testing post", posted:"2021-04-25"}]}, currentUser:true});
+// });
 
 app.get("/profile/:userName", (req, res) => {
   const userName = req.params.userName;
   if(req.isAuthenticated()){
+    var isFriend = false;
+    if(req.user.friends.includes(userName)){
+      isFriend = true;
+    }
     User.findOne({username: userName}, function(err, foundUser){
       if(err){
         console.log(err);
       } else {
         if(foundUser){
-          if(userName === req.user.username){
-            res.render("profile", {user:foundUser, currentUser:true});
-          } else {
-            res.render("profile", {user:foundUser, currentUser:false});
-          }
+          var userPostIds = foundUser.posts;
+          Post.find({
+            _id: { $in: userPostIds }
+          }, function(err, posts){
+            if(err){
+              console.log(err)
+            } else {
+              if(userName === req.user.username){
+                res.render("profile", {user:foundUser, posts: posts, currentUser:true, isFriend: isFriend});
+              } else {
+                res.render("profile", {user:foundUser, posts: posts, currentUser:false, isFriend: isFriend});
+              }
+            }
+          })
         } else {
           res.send("This user does not exist");
         }
-        // foundList.items.push(item);
-        // foundList.save();
-        // res.redirect("/" + listName);
       }
     })
   } else {
@@ -112,29 +126,27 @@ app.get("/profile/:userName", (req, res) => {
 
 /*                             Post Requests                         */
 
-app.post("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/");
-});
-
 app.post("/profile", (req, res) => {
   const today = new Date();
   const dd = String(today.getDate()).padStart(2, '0');
   const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   const yyyy = today.getFullYear();
-  const date = yyyy+"-"+mm+"-"+dd
+  const hr = today.getHours();
+  const mt = today.getMinutes();
+  const date = yyyy+"-"+mm+"-"+dd + " " + hr + ":" + mt;
   console.log(date);
   const post = new Post({
     username: req.user.username,
     content: req.body.postContent,
     posted: date
   });
+  post.save();
   User.findOne({username:req.user.username}, function(err, foundUser){
     if(err){
       console.log(err);
     } else {
       if(foundUser){
-        foundUser.posts.push(post);
+        foundUser.posts.push(post._id);
         foundUser.save();
         res.redirect("/profile/"+req.user.username);
       } else {
@@ -155,6 +167,60 @@ app.post("/profile/bio", (req, res) => {
         res.redirect("/profile/"+req.user.username);
       }
     });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.post("/profile/addfriend", (req, res) => {
+  if(req.isAuthenticated()){
+    const addedUsername = req.body.addedFriend;
+    const loggedInUsername = req.user.username;
+    User.findOne({username:addedUsername}, function(err, foundUser){
+      if(err){
+        console.log(err);
+      } else {
+        if(req.user.friendRequests.includes(addedUsername)){
+          req.user.friends.push(addedUsername);
+          req.user.friendRequests.splice(req.user.friendRequests.indexOf(addedUsername), 1);
+          req.user.save();
+
+          foundUser.friends.push(loggedInUsername);
+          foundUser.save();
+        } else if(!foundUser.friendRequests.includes(loggedInUsername) &&
+                  !foundUser.friends.includes(loggedInUsername)){
+          foundUser.friendRequests.push(loggedInUsername);
+          foundUser.save();
+        }
+        res.redirect("/profile/"+addedUsername);
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.post("/profile/acceptfriend", (req, res) => {
+  if(req.isAuthenticated()){
+    const acceptedUsername = req.body.acceptedFriend;
+    User.findOne({username: acceptedUsername}, function(err, foundUser){
+      if(err){
+        console.log(err);
+      } else {
+        req.user.friendRequests.splice(req.user.friendRequests.indexOf(acceptedUsername), 1);
+        if(!req.user.friends.includes(acceptedUsername)){
+          req.user.friends.push(acceptedUsername);
+          req.user.save();
+        }
+        if(!foundUser.friends.includes(req.user.username)){
+          foundUser.friends.push(req.user.username);
+          foundUser.save();
+        }
+        res.redirect("/profile/"+req.user.username);
+      }
+    });
+  } else {
+    res.redirect("/login");
   }
 });
 
@@ -177,15 +243,17 @@ app.post("/search", (req, res) => {
   }
 });
 
-/*                            Login and Register                         */
+/*                           User Authentication Stuff                         */
 
 app.post("/login", (req, res) => {
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password
-  });
+  const username = req.body.username.toLowerCase();
+  // const user = new User({
+  //   username: username,
+  //   password: req.body.password
+  // });
 
   passport.authenticate("local", function(err, user){
+    //console.log(user);
     if(err){
       console.log(err);
     } else {
@@ -195,6 +263,7 @@ app.post("/login", (req, res) => {
           console.log("Successfully logged in");
         });
       } else {
+        //console.log(user);
         res.redirect("/login");
       }
     }
@@ -202,8 +271,16 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const initialDescription = "Hi, I'm " + req.body.username;
-  User.register({username: req.body.username, bio: {description: initialDescription, location: "", birthday: new Date()}}, req.body.password, function(err, user){
+  const username = req.body.username.toLowerCase();
+  const initialDescription = "Hi, I'm " + username;
+  User.register({
+    username: username,
+    bio: {
+      description: initialDescription,
+      location: "",
+      accountCreated: new Date()
+    }
+  }, req.body.password, function(err, user){
     if(err){
       console.log(err);
       res.redirect("/register");
@@ -214,6 +291,11 @@ app.post("/register", (req, res) => {
       });
     }
   });
+});
+
+app.post("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
 });
 
 app.listen(process.env.PORT || 3000, () => {

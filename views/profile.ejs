@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Chirper</title>
-  <link rel="icon" type="image/png" href="images/logo.jpg"/>
+  <link rel="icon" type="image/png" href="../images/logo.jpg"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="../css/profile.css">
 </head>
@@ -24,9 +24,30 @@
         <h4 class="bio"> <%=user.username%> is from: </h4>
         <h5> <%=user.bio.location%> </h5>
       <%}%>
-      <div class=edit-btn-div>
-        <button class="btn btn-md btn-outline-dark edit-btn" onClick="document.getElementById('popup').style.display='inline'">Edit Profile</button>
-      </div>
+      <!-- <% if(currentUser) { %>
+        <div class=edit-btn-div>
+          <button class="btn btn-md btn-outline-dark edit-btn" onClick="document.getElementById('edit-popup').style.display='inline'">Edit Profile</button>
+        </div>
+      <%}%>
+      <% if(currentUser) { %>
+        <div class=edit-btn-div>
+          <button class="btn btn-md btn-outline-dark bio-btn" onClick="document.getElementById('fr-popup').style.display='inline'">Friend Requests</button>
+        </div>
+      <%}%> -->
+      <% if(currentUser) {%>
+        <div class=bio-btn-div>
+          <button class="btn btn-md btn-outline-dark bio-btn" onClick="document.getElementById('edit-popup').style.display='inline'">Edit Profile</button>
+          <button class="btn btn-md btn-outline-dark bio-btn" onClick="document.getElementById('fr-popup').style.display='inline'">Friend Requests</button>
+        </div>
+      <%} else { %>
+        <% if(!isFriend) {%>
+          <div class="bio-btn-div">
+            <form action="/profile/addfriend" method="POST">
+              <button class="btn btn-md btn-outline-dark send-fr-btn" type="submit" name="addedFriend" value="<%=user.username%>">Add Friend</button>
+            </form>
+          </div>
+        <%}%>
+      <%}%>
       <a form="button" class="btn btn-md btn-outline-dark return-btn" href="/social">Go Back</a>
     </div>
     <div class="col-lg-8 col-md-12">
@@ -39,7 +60,7 @@
           </form>
         </div>
       <%}%>
-      <% user.posts.slice().reverse().forEach(function(post){ %>
+      <% posts.slice().reverse().forEach(function(post){ %>
         <div class="post">
           <h3><%=post.content%></h3>
           <hr>
@@ -50,8 +71,8 @@
   </div>
 </div>
 
-<div class="popup-window" id="popup">
-  <div class="edit-info">
+<div class="popup-window" id="edit-popup">
+  <div class="popup-info">
     <form action="/profile/bio" method="POST">
       <label>Edit Description
         <textarea id="edit-description" name="description" cols="50" rows="4"><%=user.bio.description%></textarea>
@@ -59,9 +80,32 @@
       <label>Edit Location
         <textarea id="edit-location" name="location" cols="50" rows="4"><%=user.bio.location%></textarea>
       </label>
-      <button type="submit" class="btn btn-md btn-outline-dark save-bio-btn">Save</button>
+      <% if(currentUser) {%>
+        <button type="submit" class="btn btn-md btn-outline-dark save-bio-btn">Save</button>
+      <%}%>
     </form>
-    <button class="btn btn-md btn-outline-dark close-btn" onClick="document.getElementById('popup').style.display='none'">Close</button>
+    <button class="btn btn-md btn-outline-dark close-btn" onClick="document.getElementById('edit-popup').style.display='none'">Close</button>
+  </div>
+</div>
+
+<div class="popup-window" id="fr-popup">
+  <div class="popup-info">
+    <% if(currentUser) { %>
+      <div class="scroll-container">
+        <% user.friendRequests.forEach(function(fr){%>
+          <div class="scroll-fr">
+            <form class="fr-form" action="/profile/acceptfriend" method="POST">
+              <h3 class="fr-user"><a href="/profile/<%=fr%>"> <%= fr %> </a></h3>
+              <button class="btn btn-md btn-outline-dark accept-btn" type="submit" name="acceptedFriend" value="<%= fr %>">Accept Friend</button>
+            </form>
+          </div>
+          <hr class="fr-seperator">
+        <%})%>
+      </div>
+    <% } %>
+    <!-- <form action="/profile/fr" method="POST">
+    </form> -->
+    <button class="btn btn-md btn-outline-dark close-btn" onClick="document.getElementById('fr-popup').style.display='none'">Close</button>
   </div>
 </div>
 
